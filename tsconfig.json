@@ -6,6 +6,6 @@
     "esModuleInterop": true,
     "allowJs": true,
     "strictNullChecks": false,
-    "strict": false
+    "strict": false,
   }
 }
