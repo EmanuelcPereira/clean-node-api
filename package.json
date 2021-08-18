@@ -4,10 +4,13 @@
   "main": "index.js",
   "author": "Emanuel Pereira <emanuelcdpr@gmail.com>",
   "license": "MIT",
-  "dependencies": {},
+  "dependencies": {
+    "validator": "^13.6.0"
+  },
   "devDependencies": {
     "@types/jest": "^27.0.1",
     "@types/node": "^16.6.1",
+    "@types/validator": "^13.6.3",
     "@typescript-eslint/eslint-plugin": "4",
     "eslint": "7",
     "eslint-config-standard-with-typescript": "^20.0.0",
