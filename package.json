@@ -5,9 +5,11 @@
   "author": "Emanuel Pereira <emanuelcdpr@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "bcrypt": "^5.0.1",
     "validator": "^13.6.0"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
     "@types/jest": "^27.0.1",
     "@types/node": "^16.6.1",
     "@types/validator": "^13.6.3",
