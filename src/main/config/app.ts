@@ -1,6 +1,8 @@
-import express from 'express'
 import setupMiddlewares from './middlewares'
+
+import express from 'express'
 
 const app = express()
 setupMiddlewares(app)
+
 export default app
