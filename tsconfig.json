@@ -7,5 +7,6 @@
     "allowJs": true,
     "strictNullChecks": false,
     "strict": false,
+    "skipLibCheck": true
   }
 }

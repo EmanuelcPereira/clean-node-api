@@ -31,7 +31,7 @@
   },
   "scripts": {
     "test": "jest --passWithNoTests --silent --noStackTrace --runInBand --no-cache",
-    "test:verbose": "jest --passWithNoTests --runInBand",
+    "test:verbose": "jest --passWithNoTests --runInBand --no-cache",
     "test:unit": "yarn test -- --watch -c jest-unit-config.js",
     "test:integration": "yarn test -- --watch -c jest-integration-config.js",
     "test:staged": "yarn test -- --findRelatedTests",
