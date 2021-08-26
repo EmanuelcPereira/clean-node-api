@@ -26,7 +26,7 @@
     "eslint-plugin-node": "11",
     "eslint-plugin-promise": "4",
     "git-commit-msg-linter": "^3.2.8",
-    "husky": "^7.0.1",
+    "husky": "^7.0.0",
     "jest": "^27.0.6",
     "lint-staged": "^11.1.2",
     "sucrase": "^3.20.1",
@@ -41,6 +41,7 @@
     "test:unit": "yarn test -- --watch -c jest-unit-config.js",
     "test:integration": "yarn test -- --watch -c jest-integration-config.js",
     "test:staged": "yarn test -- --findRelatedTests",
-    "test:ci": "yarn test -- --coverage"
+    "test:ci": "yarn test -- --coverage",
+    "prepare": "husky install"
   }
 }

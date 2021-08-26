@@ -7,8 +7,10 @@ export const MongoHelper = {
     this.client = await MongoClient.connect(uri)
   },
 
-  async disconnect (): Promise<void> {
+  async disconnect () {
     await this.client.close()
+    this.client = null
+    this.db = null
   },
 
   getCollection (name: string): Collection {

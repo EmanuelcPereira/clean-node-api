@@ -1,11 +1,9 @@
 import { MongoHelper } from '../helpers/mongo-helper'
 import { AccountMongoRepository } from './account'
 
-const uri = 'mongodb://localhost:27017/jest'
-
 describe('Account Mongo Repository', () => {
   beforeAll(async () => {
-    await MongoHelper.connect(uri)
+    await MongoHelper.connect(process.env.MONGO_URL)
   })
 
   afterAll(async () => {
