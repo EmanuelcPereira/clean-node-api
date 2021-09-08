@@ -2,7 +2,7 @@ import { AccountModel } from '../../../domain/models/account'
 import { AddAccountModel } from '../../../domain/usecases/add-account'
 import { DbAddAccount } from './db-add-account'
 import { Hasher } from './db-add-account-protocols'
-import { AddAccountRepository } from '../../protocols/db/add-account-repository'
+import { AddAccountRepository } from '../../protocols/db/account/add-account-repository'
 
 const makeAddAccountRepository = (): AddAccountRepository => {
   class AddAccountRepositoryStub implements AddAccountRepository {
