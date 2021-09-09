@@ -48,5 +48,8 @@
     "test:staged": "yarn test -- --findRelatedTests",
     "test:ci": "yarn test -- --coverage",
     "prepare": "husky install"
+  },
+  "engines": {
+    "node": "16.x"
   }
 }
