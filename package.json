@@ -32,7 +32,6 @@
     "jest": "^27.0.6",
     "lint-staged": "^11.1.2",
     "rimraf": "^3.0.2",
-    "sucrase": "^3.20.1",
     "supertest": "^6.1.6",
     "ts-jest": "^27.0.4",
     "typescript": "^4.3.5"
@@ -40,7 +39,8 @@
   "scripts": {
     "start": "node dist/main/server.js",
     "build": "rimraf dist && tsc",
-    "dev": "sucrase-node src/main/server.ts",
+    "up": "yarn build && docker-compose up -d",
+    "down": "docker-compose down",
     "test": "jest --passWithNoTests --silent --noStackTrace --runInBand --no-cache",
     "test:verbose": "jest --passWithNoTests --runInBand --no-cache",
     "test:unit": "yarn test -- --watch -c jest-unit-config.js",
@@ -50,6 +50,6 @@
     "prepare": "husky install"
   },
   "engines": {
-    "node": "16.x"
+    "node": "14.x"
   }
 }
