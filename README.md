@@ -51,12 +51,11 @@ API desenvolvida durante o treinamento, do Rodrigo Manguinho, na Udemy, para des
 * Docker
 * Jest
 * MongoDb
-* Travis CI
+* GitHub Actions
 * Swagger
 * Bcrypt
 * JsonWebToken
 * Faker
-* Coveralls
 * Validator
 * Express
 * Apollo Server Express
