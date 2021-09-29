@@ -4,6 +4,7 @@
     "Decrypter",
     "encrypter",
     "Hasher",
+    "middlewares",
     "signup",
     "usecases"
   ]
