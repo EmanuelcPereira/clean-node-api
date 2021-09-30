@@ -1,9 +1,9 @@
 import { SignUpController } from './signup-controller'
-import { MissingParamError, ServerError } from '../../../errors'
 import { AddAccount, AddAccountModel, AccountModel, Validation, Authentication, AuthenticationModel } from './signup-controller-protocols'
-import { HttpRequest } from '../../../protocols/http'
-import { ok, serverError, badRequest, forbidden } from '../../../helpers/http/http-helper'
-import { EmailInUseError } from '../../../errors/email-in-use-error'
+import { MissingParamError, ServerError } from '@/presentation/errors'
+import { HttpRequest } from '@/presentation/protocols/http'
+import { ok, serverError, badRequest, forbidden } from '@/presentation/helpers/http/http-helper'
+import { EmailInUseError } from '@/presentation/errors/email-in-use-error'
 
 const makeAddAccount = (): AddAccount => {
   class AddAccountStub implements AddAccount {
