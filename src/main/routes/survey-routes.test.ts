@@ -8,9 +8,28 @@ import env from '../config/env'
 let surveyCollection: Collection
 let accountCollection: Collection
 
-describe('Login Routes', () => {
+const makeAccessToken = async (): Promise<string> => {
+  const res = await accountCollection.insertOne({
+    name: 'Emanuel',
+    email: 'emanuelcdpr@gmail.com',
+    password: '123',
+    role: 'admin'
+  })
+  const id = res.insertedId
+  const accessToken = sign({ id }, env.jwtSecret)
+  await accountCollection.updateOne({
+    _id: id
+  }, {
+    $set: {
+      accessToken
+    }
+  })
+  return accessToken
+}
+
+describe('Survey Routes', () => {
   beforeAll(async () => {
-    await MongoHelper.connect(process.env.MONGO_URL)
+    await MongoHelper.connect(env.mongoUrl)
   })
 
   afterAll(async () => {
@@ -20,12 +39,12 @@ describe('Login Routes', () => {
   beforeEach(async () => {
     surveyCollection = await MongoHelper.getCollection('surveys')
     await surveyCollection.deleteMany({})
-    accountCollection = await MongoHelper.getCollection('surveys')
+    accountCollection = await MongoHelper.getCollection('accounts')
     await accountCollection.deleteMany({})
   })
 
   describe('POST /surveys', () => {
-    test('should returns 403 on add survey without accessToken', async () => {
+    test('Should return 403 on add survey without accessToken', async () => {
       await request(app)
         .post('/api/surveys')
         .send({
@@ -33,30 +52,16 @@ describe('Login Routes', () => {
           answers: [{
             answer: 'Answer 1',
             image: 'http://image-name.com'
-          }, {
+          },
+          {
             answer: 'Answer 2'
           }]
         })
         .expect(403)
     })
 
-    test('should returns 204 on add survey with valid accessToken', async () => {
-      const res = await accountCollection.insertOne({
-        name: 'Emanuel Pereira',
-        email: 'emanuelcdpr@gmail.com',
-        password: 'emanuel_password',
-        role: 'admin'
-      })
-
-      const id = res.insertedId.id
-      const accessToken = sign({ id }, env.jwtSecret)
-      await accountCollection.updateOne({
-        _id: id
-      }, {
-        $set: {
-          accessToken
-        }
-      })
+    test('Should return 204 on add survey with a valid accessToken', async () => {
+      const accessToken = await makeAccessToken()
       await request(app)
         .post('/api/surveys')
         .set('x-access-token', accessToken)
@@ -65,19 +70,28 @@ describe('Login Routes', () => {
           answers: [{
             answer: 'Answer 1',
             image: 'http://image-name.com'
-          }, {
+          },
+          {
             answer: 'Answer 2'
           }]
         })
-        .expect(403)
+        .expect(204)
     })
   })
 
   describe('GET /surveys', () => {
-    test('should returns 403 on add survey without accessToken', async () => {
+    test('Should return 403 on load surveys without accessToken', async () => {
       await request(app)
         .get('/api/surveys')
         .expect(403)
+    })
+
+    test('Should return 204 on load surveys with a valid accessToken', async () => {
+      const accessToken = await makeAccessToken()
+      await request(app)
+        .get('/api/surveys')
+        .set('x-access-token', accessToken)
+        .expect(204)
     })
   })
 })
