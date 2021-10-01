@@ -42,7 +42,7 @@ describe('Account Mongo Repository', () => {
   })
 
   describe('loadAll()', () => {
-    test('should add an survey on success', async () => {
+    test('should load an survey on success', async () => {
       await surveyCollection.insertMany([{
         question: 'any_question',
         answers: [{
@@ -69,6 +69,23 @@ describe('Account Mongo Repository', () => {
       const sut = makeSut()
       const surveys = await sut.loadAll()
       expect(surveys.length).toBe(0)
+    })
+  })
+
+  describe('loadById()', () => {
+    test('should load an survey by Id on success', async () => {
+      const res = await surveyCollection.insertOne({
+        question: 'any_question',
+        answers: [{
+          image: 'any_image',
+          answer: 'any_answer'
+        }],
+        date: new Date()
+      })
+      const id = res.insertedId.toHexString()
+      const sut = makeSut()
+      const survey = await sut.loadById(id)
+      expect(survey).toBeTruthy()
     })
   })
 })
