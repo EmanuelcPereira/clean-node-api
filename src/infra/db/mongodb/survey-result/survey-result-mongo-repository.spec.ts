@@ -1,6 +1,6 @@
 import { SurveyResultMongoRepository } from './survey-result-mongo-repository'
 import { MongoHelper } from '@/infra/db/mongodb/helpers/mongo-helper'
-import { Collection, ObjectId } from 'mongodb'
+import { Collection } from 'mongodb'
 import { SurveyModel } from '@/domain/models/survey'
 import { AccountModel } from '@/domain/models/account'
 
@@ -25,9 +25,9 @@ const makeSurvey = async (): Promise<SurveyModel> => {
     date: new Date()
   })
 
-  const { answers } = await surveyCollection.findOne({ _id: res.insertedId })
+  const answers = await surveyCollection.findOne({ _id: res.insertedId })
 
-  return answers
+  return answers && MongoHelper.map(answers)
 }
 
 const makeAccount = async (): Promise<AccountModel> => {
@@ -36,7 +36,8 @@ const makeAccount = async (): Promise<AccountModel> => {
     email: 'any_email@mail.com',
     password: 'any_password'
   })
-  return res && MongoHelper.map(res.insertedId)
+  const account = await accountCollection.findOne({ _id: res.insertedId })
+  return account && MongoHelper.map(account)
 }
 
 describe('Account Mongo Repository', () => {
@@ -64,13 +65,48 @@ describe('Account Mongo Repository', () => {
       const survey = await makeSurvey()
       const account = await makeAccount()
       const sut = makeSut()
-      const surveyResult = await sut.save({
-        surveyId: new ObjectId(survey.id).toHexString(),
-        accountId: new ObjectId(account.id).toHexString(),
-        answer: survey[0].answer,
+      await sut.save({
+        surveyId: survey.id,
+        accountId: account.id,
+        answer: survey.answers[0].answer,
         date: new Date()
       })
+      const surveyResult = await surveyResultsCollection.findOne({
+        surveyId: survey.id,
+        accountId: account.id
+      })
       expect(surveyResult).toBeTruthy()
+    })
+
+    test('should update survey result if its not new', async () => {
+      const survey = await makeSurvey()
+      const account = await makeAccount()
+      await surveyResultsCollection.insertOne({
+        surveyId: survey.id,
+        accountId: account.id,
+        answer: survey.answers[0].answer,
+        date: new Date()
+      })
+
+      const res = await surveyResultsCollection.findOne({
+        surveyId: survey.id,
+        accountId: account.id
+      })
+      const sut = makeSut()
+      await sut.save({
+        surveyId: survey.id,
+        accountId: account.id,
+        answer: survey.answers[1].answer,
+        date: new Date()
+      })
+
+      const surveyResult = await surveyResultsCollection.findOne({
+        surveyId: survey.id,
+        accountId: account.id
+      })
+      expect(surveyResult).toBeTruthy()
+      expect(surveyResult.id).toEqual(res.id)
+      expect(surveyResult.answer).toBe(survey.answers[1].answer)
     })
   })
 })
