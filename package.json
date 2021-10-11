@@ -3,7 +3,7 @@
   "version": "2.2.2",
   "main": "index.js",
   "author": "Emanuel Pereira <emanuelcdpr@gmail.com>",
-  "license": "MIT",
+  "license": "GPL-3.0-or-later",
   "dependencies": {
     "bcrypt": "^5.0.1",
     "express": "^4.17.1",
