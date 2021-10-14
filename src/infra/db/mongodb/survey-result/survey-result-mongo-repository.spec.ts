@@ -17,10 +17,13 @@ const makeSurvey = async (): Promise<SurveyModel> => {
     question: 'any_question',
     answers: [{
       image: 'any_image',
-      answer: 'any_answer'
+      answer: 'any_answer_1'
     },
     {
-      answer: 'other_answer'
+      answer: 'any_answer_2'
+    },
+    {
+      answer: 'any_answer_3'
     }],
     date: new Date()
   })
@@ -105,6 +108,43 @@ describe('Account Mongo Repository', () => {
         accountId: account.id
       })
       expect(surveyResult).toBeTruthy()
+    })
+  })
+
+  describe('loadBySurveyId()', () => {
+    test('should load survey result', async () => {
+      const survey = await makeSurvey()
+      const account = await makeAccount()
+      await surveyResultsCollection.insertMany([{
+        surveyId: new ObjectId(survey.id),
+        accountId: new ObjectId(account.id),
+        answer: survey.answers[0].answer,
+        date: new Date()
+      }, {
+        surveyId: new ObjectId(survey.id),
+        accountId: new ObjectId(account.id),
+        answer: survey.answers[0].answer,
+        date: new Date()
+      }, {
+        surveyId: new ObjectId(survey.id),
+        accountId: new ObjectId(account.id),
+        answer: survey.answers[1].answer,
+        date: new Date()
+      }, {
+        surveyId: new ObjectId(survey.id),
+        accountId: new ObjectId(account.id),
+        answer: survey.answers[1].answer,
+        date: new Date()
+      }])
+
+      await surveyResultsCollection.findOne({
+        surveyId: survey.id,
+        accountId: account.id
+      })
+      const sut = makeSut()
+      const surveyResult = await sut.loadBySurveyId(survey.id)
+      expect(surveyResult).toBeTruthy()
+      expect(surveyResult.surveyId).toEqual(survey.id)
     })
   })
 })
