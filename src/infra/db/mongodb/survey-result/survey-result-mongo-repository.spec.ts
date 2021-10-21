@@ -103,10 +103,10 @@ describe('Account Mongo Repository', () => {
         date: new Date()
       })
 
-      const surveyResult = await surveyResultsCollection.findOne({
+      const surveyResult = await surveyResultsCollection.find({
         surveyId: survey.id,
         accountId: account.id
-      })
+      }).toArray()
       expect(surveyResult).toBeTruthy()
     })
   })
