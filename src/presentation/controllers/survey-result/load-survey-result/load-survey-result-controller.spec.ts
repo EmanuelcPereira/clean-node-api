@@ -1,8 +1,8 @@
 import { HttpRequest, LoadSurveyById, LoadSurveyResult } from './load-survey-result-controller-protocols'
 import { LoadSurveyResultController } from './load-survey-result-controller'
 import { mockLoadSurveyById, mockLoadSurveyResult } from '@/presentation/test'
-import { throwError } from '@/domain/test'
-import { serverError, forbidden } from '@/presentation/helpers/http/http-helper'
+import { mockSurveyResultModel, throwError } from '@/domain/test'
+import { serverError, forbidden, ok } from '@/presentation/helpers/http/http-helper'
 import { InvalidParamError } from '@/presentation/errors/invalid-param-error'
 
 const mockRequest = (): HttpRequest => ({
@@ -68,5 +68,12 @@ describe('LoadSurveyResult Controller', () => {
     const httpResponse = await sut.handle(mockRequest())
 
     expect(httpResponse).toEqual(serverError(new Error()))
+  })
+
+  test('should return 200 on success', async () => {
+    const { sut } = makeSut()
+    const httpResponse = await sut.handle(mockRequest())
+
+    expect(httpResponse).toEqual(ok(mockSurveyResultModel()))
   })
 })
