@@ -7,5 +7,6 @@
     "middlewares",
     "signup",
     "usecases"
-  ]
+  ],
+  "editor.fontFamily": "Fira Code"
 }
