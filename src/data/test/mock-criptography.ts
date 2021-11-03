@@ -35,11 +35,12 @@ export const mockDecrypter = (): Decrypter => {
   return new DecrypterStub()
 }
 
-export const mockEncrypter = (): Encrypter => {
-  class EncrypterStub implements Encrypter {
-    async encrypt (id: string): Promise<string> {
-      return Promise.resolve('any_token')
-    }
+export class EncrypterSpy implements Encrypter {
+  plaintext: string
+  ciphertext = faker.datatype.uuid()
+
+  async encrypt (plaintext: string): Promise<string> {
+    this.plaintext = plaintext
+    return Promise.resolve(this.ciphertext)
   }
-  return new EncrypterStub()
 }
