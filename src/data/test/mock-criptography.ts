@@ -26,15 +26,6 @@ export class HashComparerSpy implements HashComparer {
   }
 }
 
-export const mockDecrypter = (): Decrypter => {
-  class DecrypterStub implements Decrypter {
-    async decrypt (value: string): Promise<string> {
-      return Promise.resolve('any_value')
-    }
-  }
-  return new DecrypterStub()
-}
-
 export class EncrypterSpy implements Encrypter {
   plaintext: string
   ciphertext = faker.datatype.uuid()
@@ -42,5 +33,15 @@ export class EncrypterSpy implements Encrypter {
   async encrypt (plaintext: string): Promise<string> {
     this.plaintext = plaintext
     return Promise.resolve(this.ciphertext)
+  }
+}
+
+export class DecryptSpy implements Decrypter {
+  plaintext = faker.internet.password()
+  ciphertext: string
+
+  async decrypt (ciphertext: string): Promise<string> {
+    this.ciphertext = ciphertext
+    return Promise.resolve(this.plaintext)
   }
 }
