@@ -14,6 +14,18 @@ export class HasherSpy implements Hasher {
   }
 }
 
+export class HashComparerSpy implements HashComparer {
+  plaintext: string
+  digest: string
+  isvalid = true
+
+  async compare (plaintext: string, digest: string): Promise<boolean> {
+    this.plaintext = plaintext
+    this.digest = digest
+    return this.isvalid
+  }
+}
+
 export const mockDecrypter = (): Decrypter => {
   class DecrypterStub implements Decrypter {
     async decrypt (value: string): Promise<string> {
@@ -30,13 +42,4 @@ export const mockEncrypter = (): Encrypter => {
     }
   }
   return new EncrypterStub()
-}
-
-export const mockHashComparer = (): HashComparer => {
-  class HashCompareStub implements HashComparer {
-    async compare (value: string, hash: string): Promise<boolean> {
-      return Promise.resolve(true)
-    }
-  }
-  return new HashCompareStub()
 }
