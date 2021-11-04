@@ -23,11 +23,10 @@ export class LoadSurveyByIdRepositorySpy implements LoadSurveyByIdRepository {
   }
 }
 
-export const mockLoadSurveysRepository = (): LoadSurveysRepository => {
-  class LoadSurveysRepositoryStub implements LoadSurveysRepository {
-    async loadAll (): Promise<SurveyModel[]> {
-      return Promise.resolve(mockSurveyModels())
-    }
+export class LoadSurveysRepositorySpy implements LoadSurveysRepository {
+  surveyModels = mockSurveyModels()
+
+  async loadAll (): Promise<SurveyModel[]> {
+    return Promise.resolve(this.surveyModels)
   }
-  return new LoadSurveysRepositoryStub()
 }
