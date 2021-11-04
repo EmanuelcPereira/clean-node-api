@@ -38,11 +38,13 @@ export class LoadAccountByTokenRepositorySpy implements LoadAccountByTokenReposi
   }
 }
 
-export const mockUpdateAccessTokenRepository = (): UpdateAccessTokenRepository => {
-  class UpdateAccessTokenRepositoryStub implements UpdateAccessTokenRepository {
-    async updateAccessToken (id: string, token: string): Promise<void> {
-      return Promise.resolve()
-    }
+export class UpdateAccessTokenRepositorySpy implements UpdateAccessTokenRepository {
+  id: string
+  token: string
+
+  async updateAccessToken (id: string, token: string): Promise<void> {
+    this.id = id
+    this.token = token
+    return Promise.resolve()
   }
-  return new UpdateAccessTokenRepositoryStub()
 }
