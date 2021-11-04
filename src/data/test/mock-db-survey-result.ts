@@ -3,10 +3,10 @@ import { SaveSurveyResultParams } from '@/domain/usecases/survey-result/save-sur
 import { mockSurveyResultModel } from '@/domain/test'
 
 export class SaveSurveyResultRepositorySpy implements SaveSurveyResultRepository {
-  data: SaveSurveyResultParams
+  saveSurveyResultParams: SaveSurveyResultParams
 
   async save (data: SaveSurveyResultParams): Promise<void> {
-    this.data = data
+    this.saveSurveyResultParams = data
     return Promise.resolve()
   }
 }
