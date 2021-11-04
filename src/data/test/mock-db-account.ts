@@ -16,13 +16,14 @@ export class AddAccountRepositorySpy implements AddAccountRepository {
   }
 }
 
-export const mockLoadAccountByEmailRepository = (): LoadAccountByEmailRepository => {
-  class LoadAccountByEmailRepositoryStub implements LoadAccountByEmailRepository {
-    async loadByEmail (email: string): Promise<AccountModel> {
-      return Promise.resolve(mockAccountModel())
-    }
+export class LoadAccountByEmailRepositorySpy implements LoadAccountByEmailRepository {
+  email: string
+  accountModel = mockAccountModel()
+
+  async loadByEmail (email: string): Promise<AccountModel> {
+    this.email = email
+    return Promise.resolve(this.accountModel)
   }
-  return new LoadAccountByEmailRepositoryStub()
 }
 
 export const mockLoadAccountByTokenRepository = (): LoadAccountByTokenRepository => {
