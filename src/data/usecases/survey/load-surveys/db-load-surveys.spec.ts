@@ -1,21 +1,20 @@
 import { DbLoadSurveys } from './db-load-surveys'
-import { LoadSurveysRepository } from './db-load-surveys-protocols'
-import { mockLoadSurveysRepository } from '@/data/test/mock-db-survey'
-import { throwError, mockSurveyModels } from '@/domain/test'
+import { LoadSurveysRepositorySpy } from '@/data/test/mock-db-survey'
+import { throwError } from '@/domain/test'
 import MockDate from 'mockdate'
 
 type SutTypes = {
   sut: DbLoadSurveys
-  loadSurveysRepositoryStub: LoadSurveysRepository
+  loadSurveysRepositorySpy: LoadSurveysRepositorySpy
 }
 
 const makeSut = (): SutTypes => {
-  const loadSurveysRepositoryStub = mockLoadSurveysRepository()
-  const sut = new DbLoadSurveys(loadSurveysRepositoryStub)
+  const loadSurveysRepositorySpy = new LoadSurveysRepositorySpy()
+  const sut = new DbLoadSurveys(loadSurveysRepositorySpy)
 
   return {
     sut,
-    loadSurveysRepositoryStub
+    loadSurveysRepositorySpy
   }
 }
 
@@ -29,21 +28,20 @@ describe('DbLoadSurveys', () => {
   })
 
   test('should call LoadSurveysRepository', async () => {
-    const { sut, loadSurveysRepositoryStub } = makeSut()
-    const loadAll = jest.spyOn(loadSurveysRepositoryStub, 'loadAll')
+    const { sut, loadSurveysRepositorySpy } = makeSut()
     await sut.load()
-    expect(loadAll).toHaveBeenCalled()
+    expect(loadSurveysRepositorySpy).toHaveBeenCalled()
   })
 
   test('should return a list of Surveys on success', async () => {
-    const { sut } = makeSut()
-    const httpResponse = await sut.load()
-    expect(httpResponse).toEqual(mockSurveyModels())
+    const { sut, loadSurveysRepositorySpy } = makeSut()
+    const surveys = await sut.load()
+    expect(surveys).toEqual(loadSurveysRepositorySpy.surveyModels)
   })
 
   test('should throws if LoadSurveysRepository throw', async () => {
-    const { sut, loadSurveysRepositoryStub } = makeSut()
-    jest.spyOn(loadSurveysRepositoryStub, 'loadAll').mockImplementationOnce(throwError)
+    const { sut, loadSurveysRepositorySpy } = makeSut()
+    jest.spyOn(loadSurveysRepositorySpy, 'loadAll').mockImplementationOnce(throwError)
     const promise = sut.load()
     await expect(promise).rejects.toThrow()
   })
