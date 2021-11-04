@@ -36,7 +36,7 @@ export class EncrypterSpy implements Encrypter {
   }
 }
 
-export class DecryptSpy implements Decrypter {
+export class DecrypterSpy implements Decrypter {
   plaintext = faker.internet.password()
   ciphertext: string
 
