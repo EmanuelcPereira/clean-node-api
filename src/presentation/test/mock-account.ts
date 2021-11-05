@@ -3,7 +3,7 @@ import { mockAccountModel } from '@/domain/test'
 import { AccountModel } from '@/domain/models/account'
 import { Authentication, AuthenticationParams } from '@/domain/usecases/account/authentication'
 import { LoadAccountByToken } from '@/domain/usecases/account/load-account-by-token'
-
+import faker from 'faker'
 export class AddAccountSpy implements AddAccount {
   addAccountParams: AddAccountParams
   accountModel = mockAccountModel()
@@ -14,13 +14,14 @@ export class AddAccountSpy implements AddAccount {
   }
 }
 
-export const mockAuthentication = (): Authentication => {
-  class AuthenticationStub implements Authentication {
-    async auth (atuhetication: AuthenticationParams): Promise<string> {
-      return Promise.resolve('any_token')
-    }
+export class AuthenticationSpy implements Authentication {
+  atuhetication: AuthenticationParams
+  token = faker.datatype.uuid()
+
+  async auth (atuhetication: AuthenticationParams): Promise<string> {
+    this.atuhetication = atuhetication
+    return Promise.resolve(this.token)
   }
-  return new AuthenticationStub()
 }
 
 export const mockLoadAccountByToken = (): LoadAccountByToken => {
