@@ -25,8 +25,10 @@ export class LoadSurveyByIdRepositorySpy implements LoadSurveyByIdRepository {
 
 export class LoadSurveysRepositorySpy implements LoadSurveysRepository {
   surveyModels = mockSurveyModels()
+  callsCount = 0
 
   async loadAll (): Promise<SurveyModel[]> {
+    this.callsCount++
     return Promise.resolve(this.surveyModels)
   }
 }
