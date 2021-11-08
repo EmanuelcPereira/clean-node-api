@@ -13,11 +13,12 @@ export class SaveSurveyResultSpy implements SaveSurveyResult {
   }
 }
 
-export const mockLoadSurveyResult = (): LoadSurveyResult => {
-  class LoadSurveyResultStub implements LoadSurveyResult {
-    async load (surveyId: string): Promise<SurveyResultModel> {
-      return Promise.resolve(mockSurveyResultModel())
-    }
+export class LoadSurveyResultSpy implements LoadSurveyResult {
+  surveyId: string
+  surveyResultModel = mockSurveyResultModel()
+
+  async load (surveyId: string): Promise<SurveyResultModel> {
+    this.surveyId = surveyId
+    return Promise.resolve(this.surveyResultModel)
   }
-  return new LoadSurveyResultStub()
 }
