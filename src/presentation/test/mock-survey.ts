@@ -23,11 +23,12 @@ export class LoadSurveysSpy implements LoadSurveys {
   }
 }
 
-export const mockLoadSurveyById = (): LoadSurveyById => {
-  class LoadSurveyByIdStub implements LoadSurveyById {
-    async loadById (id: string): Promise<SurveyModel> {
-      return Promise.resolve(mockSurveyModel())
-    }
+export class LoadSurveyByIdSpy implements LoadSurveyById {
+  id: string
+  surveyModel = mockSurveyModel()
+
+  async loadById (id: string): Promise<SurveyModel> {
+    this.id = id
+    return Promise.resolve(this.surveyModel)
   }
-  return new LoadSurveyByIdStub()
 }
