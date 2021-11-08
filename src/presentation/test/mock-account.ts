@@ -15,11 +15,11 @@ export class AddAccountSpy implements AddAccount {
 }
 
 export class AuthenticationSpy implements Authentication {
-  atuhetication: AuthenticationParams
+  authentication: AuthenticationParams
   token = faker.datatype.uuid()
 
-  async auth (atuhetication: AuthenticationParams): Promise<string> {
-    this.atuhetication = atuhetication
+  async auth (authentication: AuthenticationParams): Promise<string> {
+    this.authentication = authentication
     return Promise.resolve(this.token)
   }
 }
