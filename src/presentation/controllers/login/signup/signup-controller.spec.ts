@@ -1,8 +1,7 @@
 import { SignUpController } from './signup-controller'
-import { MissingParamError, ServerError } from '@/presentation/errors'
+import { MissingParamError, ServerError, EmailInUseError } from '@/presentation/errors'
 import { HttpRequest } from '@/presentation/protocols/http'
 import { ok, serverError, badRequest, forbidden } from '@/presentation/helpers/http/http-helper'
-import { EmailInUseError } from '@/presentation/errors/email-in-use-error'
 import { throwError } from '@/domain/test'
 import { AddAccountSpy, ValidationSpy, AuthenticationSpy } from '@/presentation/test'
 import faker from 'faker'
@@ -40,24 +39,22 @@ const makeSut = (): SutTypes => {
 }
 
 describe('SignUp Controller', () => {
-  test('should call AddAccount with correct values', async () => {
-    const { sut, addAccountSpy } = makeSut()
-    const request = mockRequest()
-    await sut.handle(mockRequest())
-    expect(addAccountSpy.addAccountParams).toBe({
-      name: request.body.name,
-      email: request.body.email,
-      password: request.body.password
-    })
-  })
-
   test('should return 500 if AddAccount throws', async () => {
     const { sut, addAccountSpy } = makeSut()
-    jest.spyOn(addAccountSpy, 'add').mockImplementationOnce(async () => {
-      return Promise.reject(new Error())
-    })
+    jest.spyOn(addAccountSpy, 'add').mockImplementationOnce(throwError)
     const httpResponse = await sut.handle(mockRequest())
-    expect(httpResponse).toEqual(serverError(new ServerError()))
+    expect(httpResponse).toEqual(serverError(new ServerError(null)))
+  })
+
+  test('Should call AddAccount with correct values', async () => {
+    const { sut, addAccountSpy } = makeSut()
+    const httpRequest = mockRequest()
+    await sut.handle(httpRequest)
+    expect(addAccountSpy.addAccountParams).toEqual({
+      name: httpRequest.body.name,
+      email: httpRequest.body.email,
+      password: httpRequest.body.password
+    })
   })
 
   test('should return 403 if AddAccount returns null', async () => {
@@ -91,7 +88,7 @@ describe('SignUp Controller', () => {
     const { sut, authenticationSpy } = makeSut()
     const request = mockRequest()
     await sut.handle(request)
-    expect(authenticationSpy.authentication).toBe({
+    expect(authenticationSpy.authentication).toEqual({
       email: request.body.email,
       password: request.body.password
     })
