@@ -50,7 +50,7 @@ describe('Auth Middleware', () => {
   })
 
   test('should return 200 if LoadAccountByToken returns an account', async () => {
-    const { sut,loadAccountByTokenSpy } = makeSut()
+    const { sut, loadAccountByTokenSpy } = makeSut()
     const httpResponse = await sut.handle(mockRequest())
     expect(httpResponse).toEqual(ok({ accountId: loadAccountByTokenSpy.accountModel.id }))
   })

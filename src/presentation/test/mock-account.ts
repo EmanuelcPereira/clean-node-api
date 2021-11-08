@@ -8,8 +8,8 @@ export class AddAccountSpy implements AddAccount {
   addAccountParams: AddAccountParams
   accountModel = mockAccountModel()
 
-  async add (addAccountParams: AddAccountParams): Promise<AccountModel> {
-    this.addAccountParams = addAccountParams
+  async add (account: AddAccountParams): Promise<AccountModel> {
+    this.addAccountParams = account
     return Promise.resolve(this.accountModel)
   }
 }

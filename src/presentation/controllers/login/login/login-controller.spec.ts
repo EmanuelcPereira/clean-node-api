@@ -32,7 +32,7 @@ describe('Login Controller', () => {
     const { sut, authenticationSpy } = makeSut()
     const request = mockRequest()
     await sut.handle(request)
-    expect(authenticationSpy.authentication).toBe({
+    expect(authenticationSpy.authentication).toEqual({
       email: request.body.email,
       password: request.body.password
     })

@@ -1,6 +1,8 @@
 import { MongoHelper, QueryBuilder } from '../helpers'
-import { SaveSurveyResultParams, SaveSurveyResultRepository, SurveyResultModel } from '@/data/usecases/survey-result/save-survey-result/db-save-survey-result-protocols'
+import { SaveSurveyResultRepository } from '@/data/protocols/db/survey-result/save-survey-result-repository'
 import { LoadSurveyResultRepository } from '@/data/protocols/db/survey-result/load-survey-result-repository'
+import { SurveyResultModel } from '@/domain/models/survey-result'
+import { SaveSurveyResultParams } from '@/domain/usecases/survey-result/save-survey-result'
 import { ObjectId } from 'mongodb'
 
 export class SurveyResultMongoRepository implements SaveSurveyResultRepository, LoadSurveyResultRepository {
@@ -111,7 +113,7 @@ export class SurveyResultMongoRepository implements SaveSurveyResultRepository, 
         _id: 0,
         surveyId: '$_id.surveyId',
         question: '$_id.question',
-        date: '_id.date',
+        date: '$_id.date',
         answers: {
           $reduce: {
             input: '$answers',
