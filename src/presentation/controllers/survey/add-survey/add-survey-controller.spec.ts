@@ -6,18 +6,16 @@ import { ValidationSpy, AddSurveySpy } from '@/presentation/test'
 import MockDate from 'mockdate'
 import faker from 'faker'
 
-const mockRequest = (): HttpRequest => {
-  return {
-    body: {
-      question: faker.random.words(),
-      answers: [{
-        image: faker.image.imageUrl(),
-        answer: faker.random.word()
-      }],
-      date: faker.date.recent()
-    }
+const mockRequest = (): HttpRequest => ({
+  body: {
+    question: faker.random.words(),
+    answers: [{
+      image: faker.image.imageUrl(),
+      answer: faker.random.word()
+    }],
+    date: new Date()
   }
-}
+})
 
 type SutTypes = {
   sut: AddSurveyController
@@ -38,11 +36,11 @@ const makeSut = (): SutTypes => {
 }
 
 describe('AddSurvey Controller', () => {
-  beforeAll(() => {
+  beforeEach(() => {
     MockDate.set(new Date())
   })
 
-  afterAll(() => {
+  afterEach(() => {
     MockDate.reset()
   })
 
