@@ -13,14 +13,14 @@ export class AddSurveySpy implements AddSurvey {
   }
 }
 
-export const mockLoadSurveys = (): LoadSurveys => {
-  class LoadSurveysStub implements LoadSurveys {
-    async load (): Promise<SurveyModel[]> {
-      return Promise.resolve(mockSurveyModels())
-    }
-  }
+export class LoadSurveysSpy implements LoadSurveys {
+  surveyModels = mockSurveyModels()
+  callsCount = 0
 
-  return new LoadSurveysStub()
+  async load (): Promise<SurveyModel[]> {
+    this.callsCount++
+    return Promise.resolve(this.surveyModels)
+  }
 }
 
 export const mockLoadSurveyById = (): LoadSurveyById => {
