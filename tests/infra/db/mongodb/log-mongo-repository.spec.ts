@@ -1,5 +1,4 @@
-import { LogMongoRepository } from './log-mongo-repository'
-import { MongoHelper } from '@/infra/db/mongodb/mongo-helper'
+import { MongoHelper, LogMongoRepository } from '@/infra/db/mongodb'
 import { Collection } from 'mongodb'
 import faker from 'faker'
 

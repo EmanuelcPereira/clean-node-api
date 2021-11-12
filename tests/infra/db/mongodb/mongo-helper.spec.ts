@@ -1,4 +1,4 @@
-import { MongoHelper as sut } from './mongo-helper'
+import { MongoHelper as sut } from '@/infra/db/mongodb'
 
 describe('Mongo Helper', () => {
   beforeAll(async () => await sut.connect(process.env.MONGO_URL))
