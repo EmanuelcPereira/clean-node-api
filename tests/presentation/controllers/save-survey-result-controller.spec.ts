@@ -2,19 +2,14 @@
 import { SaveSurveyResultController } from '@/presentation/controllers'
 import { InvalidParamError } from '@/presentation/errors'
 import { forbidden, serverError, ok } from '@/presentation/helpers/http/http-helper'
-import { HttpRequest } from '@/presentation/protocols'
 import { throwError } from '@/tests/domain/mocks'
 import { SaveSurveyResultSpy, LoadSurveyByIdSpy } from '@/tests/presentation/mocks'
 import MockDate from 'mockdate'
 import faker from 'faker'
 
-const mockRequest = (answer: string = null): HttpRequest => ({
-  params: {
-    surveyId: faker.datatype.uuid()
-  },
-  body: {
-    answer
-  },
+const mockRequest = (answer: string = null): SaveSurveyResultController.Request => ({
+  surveyId: faker.datatype.uuid(),
+  answer,
   accountId: faker.datatype.uuid()
 })
 
@@ -46,9 +41,9 @@ describe('SaveSurveyResult Controller', () => {
 
   test('Should call LoadSurveyById with correct values', async () => {
     const { sut, loadSurveyByIdSpy } = makeSut()
-    const httpRequest = mockRequest()
-    await sut.handle(httpRequest)
-    expect(loadSurveyByIdSpy.id).toBe(httpRequest.params.surveyId)
+    const request = mockRequest()
+    await sut.handle(request)
+    expect(loadSurveyByIdSpy.id).toBe(request.surveyId)
   })
 
   test('Should return 403 if LoadSurveyById returns null', async () => {
@@ -73,13 +68,13 @@ describe('SaveSurveyResult Controller', () => {
 
   test('Should call SaveSurveyResult with correct values', async () => {
     const { sut, saveSurveyResultSpy, loadSurveyByIdSpy } = makeSut()
-    const httpRequest = mockRequest(loadSurveyByIdSpy.surveyModel.answers[0].answer)
-    await sut.handle(httpRequest)
+    const request = mockRequest(loadSurveyByIdSpy.surveyModel.answers[0].answer)
+    await sut.handle(request)
     expect(saveSurveyResultSpy.saveSurveyResultParams).toEqual({
-      surveyId: httpRequest.params.surveyId,
-      accountId: httpRequest.accountId,
+      surveyId: request.surveyId,
+      accountId: request.accountId,
       date: new Date(),
-      answer: httpRequest.body.answer
+      answer: request.answer
     })
   })
 

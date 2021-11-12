@@ -1,18 +1,15 @@
 
 import { LoadSurveyResultController } from '@/presentation/controllers'
 import { InvalidParamError } from '@/presentation/errors/invalid-param-error'
-import { HttpRequest } from '@/presentation/protocols'
 import { LoadSurveyByIdSpy, LoadSurveyResultSpy } from '@/tests/presentation/mocks'
 import { throwError } from '@/tests/domain/mocks'
 import { serverError, forbidden, ok } from '@/presentation/helpers/http/http-helper'
 import MockDate from 'mockdate'
 import faker from 'faker'
 
-const mockRequest = (): HttpRequest => ({
+const mockRequest = (): LoadSurveyResultController.Request => ({
   accountId: faker.datatype.uuid(),
-  params: {
-    surveyId: faker.datatype.uuid()
-  }
+  surveyId: faker.datatype.uuid()
 })
 
 type SutTypes = {
@@ -46,7 +43,7 @@ describe('LoadSurveyResult Controller', () => {
     const { sut, loadSurveyByIdSpy } = makeSut()
     const request = mockRequest()
     await sut.handle(request)
-    expect(loadSurveyByIdSpy.id).toBe(request.params.surveyId)
+    expect(loadSurveyByIdSpy.id).toBe(request.surveyId)
   })
 
   test('should return 403 if LoadSurveyById returns null', async () => {
@@ -67,7 +64,7 @@ describe('LoadSurveyResult Controller', () => {
     const { sut, loadSurveyResultSpy } = makeSut()
     const request = mockRequest()
     await sut.handle(request)
-    expect(loadSurveyResultSpy.surveyId).toBe(request.params.surveyId)
+    expect(loadSurveyResultSpy.surveyId).toBe(request.surveyId)
     expect(loadSurveyResultSpy.accountId).toBe(request.accountId)
   })
 
