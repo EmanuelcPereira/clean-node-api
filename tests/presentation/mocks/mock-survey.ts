@@ -12,12 +12,12 @@ export class AddSurveySpy implements AddSurvey {
 }
 
 export class LoadSurveysSpy implements LoadSurveys {
-  surveyModels = mockSurveyModels()
+  result = mockSurveyModels()
   accountId: string
 
   async load (accountId: string): Promise<SurveyModel[]> {
     this.accountId = accountId
-    return Promise.resolve(this.surveyModels)
+    return this.result
   }
 }
 

@@ -29,7 +29,7 @@ export class EncrypterSpy implements Encrypter {
 
   async encrypt (plaintext: string): Promise<string> {
     this.plaintext = plaintext
-    return Promise.resolve(this.ciphertext)
+    return this.ciphertext
   }
 }
 
@@ -39,6 +39,6 @@ export class DecrypterSpy implements Decrypter {
 
   async decrypt (ciphertext: string): Promise<string> {
     this.ciphertext = ciphertext
-    return Promise.resolve(this.plaintext)
+    return this.plaintext
   }
 }

@@ -55,6 +55,5 @@ export class UpdateAccessTokenRepositorySpy implements UpdateAccessTokenReposito
   async updateAccessToken (id: string, token: string): Promise<void> {
     this.id = id
     this.token = token
-    return Promise.resolve()
   }
 }

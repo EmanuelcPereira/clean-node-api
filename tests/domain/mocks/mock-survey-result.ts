@@ -1,8 +1,8 @@
-import { SaveSurveyResultParams } from '@/domain/usecases/save-survey-result'
+import { SaveSurveyResult } from '@/domain/usecases/save-survey-result'
 import { SurveyResultModel } from '@/domain/models/survey-result'
 import faker from 'faker'
 
-export const mockSaveSurveyResultParams = (): SaveSurveyResultParams => ({
+export const mockSaveSurveyResultParams = (): SaveSurveyResult.Params => ({
   accountId: faker.datatype.uuid(),
   surveyId: faker.datatype.uuid(),
   answer: faker.random.word(),

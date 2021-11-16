@@ -1,4 +1,10 @@
-import { AddSurveyRepository, CheckSurveyByIdRepository, LoadAnswersBySurveyRepository, LoadSurveyByIdRepository, LoadSurveysRepository } from '@/data/protocols'
+import {
+  AddSurveyRepository,
+  CheckSurveyByIdRepository,
+  LoadAnswersBySurveyRepository,
+  LoadSurveyByIdRepository,
+  LoadSurveysRepository
+} from '@/data/protocols'
 import { SurveyModel } from '@/domain/models/survey'
 import { mockSurveyModel, mockSurveyModels } from '@/tests/domain/mocks'
 import faker from 'faker'
