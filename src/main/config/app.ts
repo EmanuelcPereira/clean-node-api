@@ -6,10 +6,10 @@ import setupSwagger from './swagger'
 import express from 'express'
 
 const app = express()
-setupApolloServer(app)
 setupStaticFiles(app)
 setupSwagger(app)
 setupMiddlewares(app)
 setupRoutes(app)
+setupApolloServer(app)
 
 export default app
