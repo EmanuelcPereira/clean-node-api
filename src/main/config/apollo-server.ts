@@ -1,6 +1,6 @@
 import typeDefs from '@/main/graphql/type-defs'
 import resolvers from '@/main/graphql/resolvers'
-
+import schemasDirectives from '@/main/graphql/directives'
 import { ApolloServer } from 'apollo-server-express'
 import { Express } from 'express'
 import { GraphQLError } from 'graphql'
@@ -28,6 +28,8 @@ export default async (app: Express): Promise<void> => {
   const server = new ApolloServer({
     resolvers,
     typeDefs,
+    schemasDirectives,
+    context: ({ req }) => ({ req }),
     plugins: [{
       requestDidStart: () => ({
         willSendResponse: ({ response, errors }) => handleErrors(response, errors)
