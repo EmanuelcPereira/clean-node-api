@@ -29,7 +29,7 @@ const mockAccessToken = async (): Promise<string> => {
   return accessToken
 }
 
-describe('Survey GraphQL', () => {
+describe('SurveyResult GraphQL', () => {
   beforeAll(async () => {
     apolloServer = makeApolloServer()
     await MongoHelper.connect(process.env.MONGO_URL)
@@ -46,25 +46,25 @@ describe('Survey GraphQL', () => {
     await accountCollection.deleteMany({})
   })
 
-  describe('Surveys Query', () => {
-    const surveysQuery = gql`
-    query surveys {
-      surveys {
-        id
+  describe('SurveyResult Query', () => {
+    const surveyResultQuery = gql`
+    query surveyResult ($surveyId: String!) {
+      surveyResult (surveyId: $surveyId) {
         question
         answers {
-          image
           answer
+          count
+          percent
+          isCurrentAccountAnswer
         }
         date
-        didAnswer
       }
     }
     `
-    test('should return surveys', async () => {
+    test('should return surveyResult', async () => {
       const accessToken = mockAccessToken()
       const now = new Date()
-      await surveyCollection.insertOne({
+      const surveyRes = await surveyCollection.insertOne({
         question: 'Question',
         answers: [{
           answer: 'Answer 1',
@@ -83,16 +83,28 @@ describe('Survey GraphQL', () => {
           }
         }
       })
-      const res: any = await query(surveysQuery)
-      expect(res.data.surveys.length).toBe(1)
-      expect(res.data.surveys[0].id).toBeTruthy()
-      expect(res.data.surveys[0].question).toBe('Question')
-      expect(res.data.surveys[0].date).toBe(now.toISOString())
-      expect(res.data.surveys[0].didAnswer).toBe(false)
+      const res: any = await query(surveyResultQuery, {
+        variables: {
+          surveyId: surveyRes.insertedId.toHexString()
+        }
+      })
+      expect(res.data.surveyResult.question).toBe('Question')
+      expect(res.data.surveyResult.date).toBe(now.toISOString())
+      expect(res.data.surveyResult.answers).toEqual([{
+        answer: 'Answer 1',
+        count: 0,
+        percent: 0,
+        isCurrentAccountAnswer: false
+      }, {
+        answer: 'Answer 2',
+        count: 0,
+        percent: 0,
+        isCurrentAccountAnswer: false
+      }])
     })
 
     test('should return AccessDeniedError if no accessToken is provided', async () => {
-      await surveyCollection.insertOne({
+      const surveyRes = await surveyCollection.insertOne({
         question: 'Question',
         answers: [{
           answer: 'Answer 1',
@@ -104,7 +116,11 @@ describe('Survey GraphQL', () => {
         date: new Date()
       })
       const { query } = createTestClient({ apolloServer })
-      const res: any = await query(surveysQuery)
+      const res: any = await query(surveyResultQuery, {
+        variables: {
+          surveyId: surveyRes.insertedId.toHexString()
+        }
+      })
       expect(res.data).toBeFalsy()
       expect(res.errors[0].message).toBe('Access denied')
     })
