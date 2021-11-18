@@ -26,11 +26,11 @@ describe('SurveyMongoRepository', () => {
   })
 
   beforeEach(async () => {
-    surveyCollection = await MongoHelper.getCollection('surveys')
+    surveyCollection = MongoHelper.getCollection('surveys')
     await surveyCollection.deleteMany({})
-    surveyResultCollection = await MongoHelper.getCollection('surveyResults')
+    surveyResultCollection = MongoHelper.getCollection('surveyResults')
     await surveyResultCollection.deleteMany({})
-    accountCollection = await MongoHelper.getCollection('accounts')
+    accountCollection = MongoHelper.getCollection('accounts')
     await accountCollection.deleteMany({})
   })
 
@@ -73,9 +73,8 @@ describe('SurveyMongoRepository', () => {
   describe('loadById()', () => {
     test('should load an survey by Id on success', async () => {
       const res = await surveyCollection.insertOne(mockAddSurveyParams())
-      const id = res.insertedId.toHexString()
       const sut = makeSut()
-      const survey = await sut.loadById(id)
+      const survey = await sut.loadById(res.insertedId.toHexString())
       expect(survey).toBeTruthy()
     })
 
@@ -106,8 +105,7 @@ describe('SurveyMongoRepository', () => {
     test('should return true if survey exists', async () => {
       const res = await surveyCollection.insertOne(mockAddSurveyParams())
       const sut = makeSut()
-      const id = res.insertedId.toHexString()
-      const exists = await sut.checkById(id)
+      const exists = await sut.checkById(res.insertedId.toHexString())
       expect(exists).toBe(true)
     })
 

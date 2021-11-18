@@ -1,16 +1,13 @@
-import { makeApolloServer } from './helpers'
 import { MongoHelper } from '@/infra/db/mongodb'
+import app from '@/main/config/app'
 import { Collection } from 'mongodb'
 import { hash } from 'bcrypt'
-import { createTestClient } from 'apollo-server-integration-testing'
-import { ApolloServer, gql } from 'apollo-server-express'
+import request from 'supertest'
 
 let accountCollection: Collection
-let apolloServer: ApolloServer
 
 describe('Login GraphQL', () => {
   beforeAll(async () => {
-    apolloServer = makeApolloServer()
     await MongoHelper.connect(process.env.MONGO_URL)
   })
 
@@ -19,13 +16,13 @@ describe('Login GraphQL', () => {
   })
 
   beforeEach(async () => {
-    accountCollection = await MongoHelper.getCollection('accounts')
+    accountCollection = MongoHelper.getCollection('accounts')
     await accountCollection.deleteMany({})
   })
 
   describe('Login Query', () => {
-    const loginQuery = gql`
-    query login ($email: String!, $password: String!) {
+    const query = `query {
+    login ($email: "emanuelcdpr@gmail.com", $password: "123") {
       login (email: $email, password: $password) {
         accessToken
         name
@@ -39,51 +36,42 @@ describe('Login GraphQL', () => {
         email: 'emanuelcdpr@gmail.com',
         password
       })
-      const { query } = createTestClient({ apolloServer })
-      const res: any = await query(loginQuery, {
-        variables: {
-          email: 'emanuelcdpr@gmail.com',
-          password: '123'
-        }
-      })
-      expect(res.data.login.accessToken).toBeTruthy()
-      expect(res.data.login.name).toBe('Emanuel Pereira')
+      const res = await request(app)
+        .post('/graphql')
+        .send({ query })
+
+      expect(res.status).toBe(200)
+      expect(res.body.data.login.accessToken).toBeTruthy()
+      expect(res.body.data.login.name).toBe('Emanuel Pereira')
     })
 
     test('should return an UnauthorizedError on invalid credentials', async () => {
-      const { query } = createTestClient({ apolloServer })
-      const res: any = await query(loginQuery, {
-        variables: {
-          email: 'emanuelcdpr@gmail.com',
-          password: '123'
-        }
-      })
-      expect(res.data).toBeFalsy()
-      expect(res.errors[0].message).toBe('Unauthorized')
+      const res = await request(app)
+        .post('/graphql')
+        .send({ query })
+
+      expect(res.status).toBe(401)
+      expect(res.body.data).toBeFalsy()
+      expect(res.body.errors[0].message).toBe('Unauthorized')
     })
   })
 
   describe('SignUp Mutation', () => {
-    const signUpMutation = gql`
-    mutation signUp ($name: String!, $email: String!, $password: String!, $passwordConfirmation: String!) {
-      signUp (name: $name, email: $email, password: $password, passwordConfirmation: $passwordConfirmation) {
+    const query = `
+    mutation {
+      signUp ($name: "Emanuel Pereira", $email: "emanuelcdpr@gmail.com", $password: "123", $passwordConfirmation: "123") {
         accessToken
         name
       }
     }
     `
     test('should return an Account on valid data', async () => {
-      const { mutate } = createTestClient({ apolloServer })
-      const res: any = await mutate(signUpMutation, {
-        variables: {
-          name: 'Emanuel Pereira',
-          email: 'emanuelcdpr@gmail.com',
-          password: '123',
-          passwordConfirmation: '123'
-        }
-      })
-      expect(res.data.signUp.accessToken).toBeTruthy()
-      expect(res.data.signUp.name).toBe('Emanuel Pereira')
+      const res = await request(app)
+        .post('/graphql')
+        .send({ query })
+      expect(res.status).toBe(200)
+      expect(res.body.data.signUp.accessToken).toBeTruthy()
+      expect(res.body.data.signUp.name).toBe('Emanuel Pereira')
     })
 
     test('should return EmailInUseError on invalid data', async () => {
@@ -93,17 +81,12 @@ describe('Login GraphQL', () => {
         email: 'emanuelcdpr@gmail.com',
         password
       })
-      const { mutate } = createTestClient({ apolloServer })
-      const res: any = await mutate(signUpMutation, {
-        variables: {
-          name: 'Emanuel Pereira',
-          email: 'emanuelcdpr@gmail.com',
-          password: '123',
-          passwordConfirmation: '123'
-        }
-      })
-      expect(res.data).toBeFalsy()
-      expect(res.errors[0].message).toBe('The received email is already in use')
+      const res = await request(app)
+        .post('/graphql')
+        .send({ query })
+      expect(res.status).toBe(403)
+      expect(res.body.data).toBeFalsy()
+      expect(res.body.errors[0].message).toBe('The received email is already in use')
     })
   })
 })
