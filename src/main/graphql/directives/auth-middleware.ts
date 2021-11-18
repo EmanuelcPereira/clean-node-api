@@ -1,22 +1,29 @@
-import { SchemaDirectiveVisitor } from 'apollo-server-express'
-import { defaultFieldResolver, GraphQLField } from 'graphql'
 import { makeAuthMiddleware } from '@/main/factories/middlewares/auth-middleware-factory'
-import { ForbiddenError } from 'apollo-server-errors';
 
-export class AuthDirective extends SchemaDirectiveVisitor {
-  visitFieldDefinition (field: GraphQLField<any, any>): any {
-    const { resolve = defaultFieldResolver } = field
-    field.resolve = async (parent, args, context, info) => {
-      const request = {
-        accessToken: context.req.headers?.['x-access-token']
+import { getDirective, MapperKind, mapSchema } from '@graphql-tools/utils'
+import { ForbiddenError } from 'apollo-server-errors'
+import { GraphQLSchema } from 'graphql'
+
+export const authDirectiveTransformer = (schema: GraphQLSchema): GraphQLSchema => {
+  return mapSchema(schema, {
+    [MapperKind.OBJECT_FIELD]: (fieldConfig) => {
+      const authDirective = getDirective(schema, fieldConfig, 'auth')
+      if (authDirective) {
+        const { resolve } = fieldConfig
+        fieldConfig.resolve = async (parent, args, context, info) => {
+          const request = {
+            accessToken: context?.req?.headers?.['x-access-token']
+          }
+          const httpResponse = await makeAuthMiddleware().handle(request)
+          if (httpResponse.statusCode === 200) {
+            Object.assign(context.req, httpResponse.body)
+            return resolve.call(this, parent, args, context, info)
+          } else {
+            throw new ForbiddenError(httpResponse.body.message)
+          }
+        }
       }
-      const httpResponse = await makeAuthMiddleware().handle(request)
-      if (httpResponse.statusCode === 200) {
-        Object.assign(context.req, httpResponse.body)
-        return resolve.call(this, parent, args, context, info)
-      } else {
-        throw new ForbiddenError(httpResponse.body.message)
-      }
+      return fieldConfig
     }
-  }
+  })
 }
